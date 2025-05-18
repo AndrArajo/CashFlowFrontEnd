@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cashflow-frontend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    # Exemplo de variáveis de ambiente (se necessário)
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_URL=http://localhost:8000/api/v1
+      - REACT_APP_USE_MOCKS=true
+    networks:
+      - cashflow-network
+    # Exemplo de healthcheck (opcional)
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Exemplo de como adicionar um serviço de backend (descomentado quando necessário)
+  # backend:
+  #   image: your-backend-image
+  #   container_name: cashflow-backend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - NODE_ENV=production
+  #   networks:
+  #     - cashflow-network
+  #   depends_on:
+  #     - database
+  
+  # Exemplo de como adicionar um banco de dados (descomentado quando necessário)
+  # database:
+  #   image: postgres:14-alpine
+  #   container_name: cashflow-db
+  #   restart: unless-stopped
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=cashflow
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   networks:
+  #     - cashflow-network
+
+networks:
+  cashflow-network:
+    driver: bridge
+
+# Volumes (descomentado quando necessário)
+# volumes:
+#   db-data: 
