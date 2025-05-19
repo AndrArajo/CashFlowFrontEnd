@@ -42,21 +42,16 @@ const TransactionList: React.FC = () => {
         setLoading(true);
         const response = await getPaginatedTransactions(page, pageSize);
         
-        console.log('Response:', response);
-        console.log('Response.data:', response.data);
-        console.log('Type of response.data:', typeof response.data, Array.isArray(response.data));
-        
         setTransactions(response.data);
         setTotalItems(response.totalItems);
         setTotalPages(response.totalPages);
         
         setError(null);
       } catch (err) {
-        console.error('Error in fetchTransactions:', err);
         setError('Erro ao carregar transações. Por favor, tente novamente.');
         // Só loga erros se não estiver em ambiente de teste
         if (process.env.NODE_ENV !== 'test') {
-          console.error(err);
+          console.error('Error in fetchTransactions:', err);
         }
       } finally {
         setLoading(false);

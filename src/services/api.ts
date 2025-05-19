@@ -56,8 +56,6 @@ export const getPaginatedTransactions = async (page: number, size: number): Prom
     const end = start + size;
     const paginatedData = mockTransactions.slice(start, end);
     
-    console.log('Mock data:', paginatedData);
-    
     // Cria uma resposta paginada simulada
     return {
       data: paginatedData,
@@ -73,8 +71,6 @@ export const getPaginatedTransactions = async (page: number, size: number): Prom
       params: { page, size }
     });
     
-    console.log('API response:', response.data);
-    
     // A estrutura da resposta da API é:
     // { success: true, message: string, data: { items: [], pageNumber: number, pageSize: number, totalCount: number, totalPages: number } }
     if (response.data && 
@@ -83,7 +79,6 @@ export const getPaginatedTransactions = async (page: number, size: number): Prom
         Array.isArray(response.data.data.items)) {
       
       const transactions = response.data.data.items as Transaction[];
-      console.log('Transactions extracted correctly:', transactions);
       
       return {
         data: transactions,
@@ -100,7 +95,6 @@ export const getPaginatedTransactions = async (page: number, size: number): Prom
         Array.isArray(response.data.items)) {
       
       const transactions = response.data.items as Transaction[];
-      console.log('Transactions extracted from response.data.items:', transactions);
       
       return {
         data: transactions,
@@ -110,9 +104,6 @@ export const getPaginatedTransactions = async (page: number, size: number): Prom
         totalPages: response.data.totalPages || Math.ceil((response.data.totalCount || transactions.length) / size)
       };
     }
-    
-    // Imprime a estrutura completa da resposta em caso de falha
-    console.log('Full response structure:', JSON.stringify(response.data, null, 2));
     
     // Fallback - tenta extrair qualquer array disponível ou retorna vazio
     const transactions: Transaction[] = [];
@@ -124,7 +115,9 @@ export const getPaginatedTransactions = async (page: number, size: number): Prom
       totalPages: 0
     };
   } catch (error) {
-    console.error('Error in getPaginatedTransactions:', error);
+    if (process.env.NODE_ENV !== 'test') {
+      console.error('Error in getPaginatedTransactions:', error);
+    }
     // Em caso de erro, retorna um array vazio
     return {
       data: [],
@@ -198,8 +191,6 @@ export const getDailyBalanceByPeriod = async (startDate: string, endDate: string
     params: { startDate, endDate },
   });
   
-  console.log('Daily balance response:', response.data);
-  
   // Verifica se tem a estrutura aninhada completa
   if (response.data && 
       response.data.data && 
@@ -246,8 +237,6 @@ export const getPaginatedDailyBalances = async (page: number, size: number): Pro
       params: { page, size }
     });
     
-    console.log('API response for daily balances:', response.data);
-    
     // Verifica se tem a estrutura aninhada completa
     if (response.data && 
         response.data.data && 
@@ -292,7 +281,9 @@ export const getPaginatedDailyBalances = async (page: number, size: number): Pro
       totalPages: Math.ceil(balances.length / size)
     };
   } catch (error) {
-    console.error('Error in getPaginatedDailyBalances:', error);
+    if (process.env.NODE_ENV !== 'test') {
+      console.error('Error in getPaginatedDailyBalances:', error);
+    }
     
     return {
       data: [],

@@ -26,6 +26,10 @@ jobs:
       - name: Run tests
         run: npm test -- --watchAll=false
       
+      - name: Create .env file
+        run: |
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" >> .env
+          echo "REACT_APP_USE_MOCKS=false" >> .env
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -53,5 +57,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
+            REACT_APP_USE_MOCKS=false
           cache-from: type=registry,ref=andrarajo/cashflow-frontend:buildcache
           cache-to: type=registry,ref=andrarajo/cashflow-frontend:buildcache,mode=max 

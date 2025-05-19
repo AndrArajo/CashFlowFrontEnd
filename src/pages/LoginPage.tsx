@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
       await login({ username, password });
       navigate('/');
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+      // Erro gerenciado pelo contexto de autenticação
     }
   };
 

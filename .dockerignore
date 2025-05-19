@@ -19,6 +19,8 @@ yarn-debug.log
 .env.development.local
 .env.test.local
 .env.production.local
+# NÃO ignorar o arquivo .env principal
+# .env 
 
 # Arquivos Docker
 Dockerfile
