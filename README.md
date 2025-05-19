@@ -1,46 +1,132 @@
-# Getting Started with Create React App
+# CashFlow Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Interface de usuário para o sistema de gerenciamento de fluxo de caixa, desenvolvida com React, TypeScript e Material UI.
 
-## Available Scripts
+## Objetivo do Projeto
 
-In the project directory, you can run:
+O CashFlow Frontend serve como interface para o sistema de gerenciamento financeiro, oferecendo uma experiência de usuário intuitiva para:
 
-### `npm start`
+- Visualizar transações financeiras (créditos e débitos)
+- Registrar novas transações com data, valor, tipo e descrição
+- Acompanhar o balanço diário automaticamente calculado
+- Analisar informações financeiras por períodos específicos
+- Suporte a modo offline com dados mockados para desenvolvimento e testes
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Executando com Docker
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Pré-requisitos
+- Docker
+- Docker Compose
 
-### `npm test`
+### Configuração
+1. Clone o repositório
+2. Crie um arquivo `.env` na raiz do projeto:
+   ```bash
+   touch .env
+   ```
+3. Configure as variáveis de ambiente no arquivo `.env`:
+   ```
+   REACT_APP_API_URL=http://localhost:8000/api/v1
+   REACT_APP_USE_MOCKS=true
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Executando
+Para iniciar a aplicação com Docker Compose:
+```bash
+docker-compose up -d
+```
 
-### `npm run build`
+A aplicação estará disponível em: http://localhost:80
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Para parar a aplicação:
+```bash
+docker-compose down
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Executando localmente
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Pré-requisitos
+- Node.js (versão 16+)
+- npm ou yarn
 
-### `npm run eject`
+### Configuração
+1. Clone o repositório
+2. Instale as dependências:
+   ```bash
+   npm install
+   # ou
+   yarn install
+   ```
+3. Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
+   ```
+   REACT_APP_API_URL=http://localhost:8000/api/v1
+   REACT_APP_USE_MOCKS=true
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Executando em desenvolvimento
+```bash
+npm start
+# ou
+yarn start
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+A aplicação estará disponível em: http://localhost:3000
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Compilando para produção
+```bash
+npm run build
+# ou
+yarn build
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Executando testes
+```bash
+# Executar todos os testes
+npm test
 
-## Learn More
+# Executar apenas testes de componentes
+npm run test:components
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Executar apenas testes de serviços
+npm run test:services
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Executar testes com cobertura
+npm run test:coverage
+```
+
+## Principais Funcionalidades
+
+- **Listagem de Transações**: Visualização de todas as transações com opção de atualização
+- **Formulário de Transações**: Interface para cadastro de novas transações
+- **Relatório de Balanço Diário**: Visualização do balanço financeiro por períodos
+- **Modo Offline**: Suporte a desenvolvimento sem backend através de mocks de dados
+- **Design Responsivo**: Interface adaptável a diferentes tamanhos de tela
+- **Testes Automatizados**: Cobertura de testes para componentes e serviços
+
+## Tecnologias Utilizadas
+
+- **React 19**: Biblioteca para construção de interfaces
+- **TypeScript**: Superset tipado de JavaScript
+- **Material UI 7**: Biblioteca de componentes com design Material
+- **Axios**: Cliente HTTP para comunicação com API
+- **React Router**: Gerenciamento de rotas da aplicação
+- **Jest e Testing Library**: Framework de testes
+- **Docker**: Containerização para implantação
+
+## Estrutura do Projeto
+
+A aplicação segue uma estrutura organizada por funcionalidade:
+
+- **src/components/**: Componentes reutilizáveis da interface
+- **src/pages/**: Páginas principais da aplicação
+- **src/services/**: Serviços para comunicação com a API
+- **src/types/**: Definições de tipos TypeScript
+- **src/mocks/**: Dados mockados para desenvolvimento offline
+- **src/__tests__/**: Testes automatizados
+- **public/**: Arquivos estáticos 
+
+## Comunicação com Backend
+
+A aplicação se comunica com o backend através de uma API RESTful. A configuração da URL da API é feita através da variável de ambiente `REACT_APP_API_URL`.
+
+Para desenvolvimento sem backend, a aplicação suporta um modo de mock que pode ser ativado através da variável de ambiente `REACT_APP_USE_MOCKS=true`.

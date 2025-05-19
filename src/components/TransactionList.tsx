@@ -24,20 +24,20 @@ const TransactionList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchTransactions = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await getTransactions();
-      setTransactions(data);
-      setError(null);
-    } catch (err) {
-      setError('Erro ao carregar transações. Por favor, tente novamente.');
+      try {
+        setLoading(true);
+        const data = await getTransactions();
+        setTransactions(data);
+        setError(null);
+      } catch (err) {
+        setError('Erro ao carregar transações. Por favor, tente novamente.');
       // Só loga erros se não estiver em ambiente de teste
       if (process.env.NODE_ENV !== 'test') {
         console.error(err);
       }
-    } finally {
-      setLoading(false);
-    }
+      } finally {
+        setLoading(false);
+      }
   }, []);
 
   useEffect(() => {
@@ -52,8 +52,8 @@ const TransactionList: React.FC = () => {
     <Box p={2}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5">
-          Transações
-        </Typography>
+        Transações
+      </Typography>
         <Tooltip title="Atualizar transações">
           <span>
             <IconButton 

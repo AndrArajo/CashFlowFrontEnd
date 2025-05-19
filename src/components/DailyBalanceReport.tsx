@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -31,7 +31,7 @@ const DailyBalanceReport: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBalances = async () => {
+  const fetchBalances = useCallback(async () => {
     if (!startDate || !endDate) {
       setError('Por favor, selecione as datas inicial e final.');
       return;
@@ -53,11 +53,11 @@ const DailyBalanceReport: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [startDate, endDate]);
 
   useEffect(() => {
     fetchBalances();
-  }, []);
+  }, [fetchBalances]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
