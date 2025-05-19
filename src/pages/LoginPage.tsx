@@ -21,7 +21,6 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // Redireciona para a página principal se estiver em modo mock
   useEffect(() => {
     if (USE_MOCKS) {
       navigate('/');
@@ -38,7 +37,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Se estiver em modo mock, não renderiza a página de login
   if (USE_MOCKS) {
     return null;
   }
@@ -74,7 +72,7 @@ const LoginPage: React.FC = () => {
               required
               fullWidth
               id="username"
-              label="Usuário"
+              label="Usuário do sistema"
               name="username"
               autoComplete="username"
               autoFocus
