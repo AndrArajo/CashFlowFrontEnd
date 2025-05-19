@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Transaction, TransactionInput, DailyBalance } from '../types';
+import { Transaction, TransactionInput, DailyBalance, PaginatedResponse } from '../types';
 import { getToken } from './auth';
 
 // Importação dos mocks
@@ -49,17 +49,91 @@ export const getTransactions = async (): Promise<Transaction[]> => {
 /**
  * Obtém transações com paginação
  */
-export const getPaginatedTransactions = async (page: number, size: number): Promise<Transaction[]> => {
+export const getPaginatedTransactions = async (page: number, size: number): Promise<PaginatedResponse<Transaction>> => {
   if (USE_MOCKS) {
     await new Promise(resolve => setTimeout(resolve, 300));
     const start = (page - 1) * size;
     const end = start + size;
-    return mockTransactions.slice(start, end);
+    const paginatedData = mockTransactions.slice(start, end);
+    
+    console.log('Mock data:', paginatedData);
+    
+    // Cria uma resposta paginada simulada
+    return {
+      data: paginatedData,
+      page: page,
+      pageSize: size,
+      totalItems: mockTransactions.length,
+      totalPages: Math.ceil(mockTransactions.length / size)
+    };
   }
-  const response = await api.get('/transaction/paginated', {
-    params: { page, size }
-  });
-  return extractData<Transaction[]>(response.data);
+  
+  try {
+    const response = await api.get('/transaction/paginated', {
+      params: { page, size }
+    });
+    
+    console.log('API response:', response.data);
+    
+    // A estrutura da resposta da API é:
+    // { success: true, message: string, data: { items: [], pageNumber: number, pageSize: number, totalCount: number, totalPages: number } }
+    if (response.data && 
+        response.data.data && 
+        response.data.data.items && 
+        Array.isArray(response.data.data.items)) {
+      
+      const transactions = response.data.data.items as Transaction[];
+      console.log('Transactions extracted correctly:', transactions);
+      
+      return {
+        data: transactions,
+        page: response.data.data.pageNumber || page,
+        pageSize: response.data.data.pageSize || size,
+        totalItems: response.data.data.totalCount || transactions.length,
+        totalPages: response.data.data.totalPages || Math.ceil((response.data.data.totalCount || transactions.length) / size)
+      };
+    }
+    
+    // Tentativa secundária - verifica se existe response.data.items diretamente
+    if (response.data && 
+        response.data.items && 
+        Array.isArray(response.data.items)) {
+      
+      const transactions = response.data.items as Transaction[];
+      console.log('Transactions extracted from response.data.items:', transactions);
+      
+      return {
+        data: transactions,
+        page: response.data.pageNumber || page,
+        pageSize: response.data.pageSize || size,
+        totalItems: response.data.totalCount || transactions.length,
+        totalPages: response.data.totalPages || Math.ceil((response.data.totalCount || transactions.length) / size)
+      };
+    }
+    
+    // Imprime a estrutura completa da resposta em caso de falha
+    console.log('Full response structure:', JSON.stringify(response.data, null, 2));
+    
+    // Fallback - tenta extrair qualquer array disponível ou retorna vazio
+    const transactions: Transaction[] = [];
+    return {
+      data: transactions,
+      page: page,
+      pageSize: size,
+      totalItems: 0,
+      totalPages: 0
+    };
+  } catch (error) {
+    console.error('Error in getPaginatedTransactions:', error);
+    // Em caso de erro, retorna um array vazio
+    return {
+      data: [],
+      page: page,
+      pageSize: size,
+      totalItems: 0,
+      totalPages: 0
+    };
+  }
 };
 
 /**
@@ -123,13 +197,32 @@ export const getDailyBalanceByPeriod = async (startDate: string, endDate: string
   const response = await api.get('/daily-balance/period', {
     params: { startDate, endDate },
   });
-  return extractData<DailyBalance[]>(response.data);
+  
+  console.log('Daily balance response:', response.data);
+  
+  // Verifica se tem a estrutura aninhada completa
+  if (response.data && 
+      response.data.data && 
+      response.data.data.items && 
+      Array.isArray(response.data.data.items)) {
+    return response.data.data.items as DailyBalance[];
+  }
+  
+  // Fallback para estrutura alternativa
+  if (response.data && 
+      response.data.items && 
+      Array.isArray(response.data.items)) {
+    return response.data.items as DailyBalance[];
+  }
+  
+  // Último recurso
+  return extractData<DailyBalance[]>(response.data) || [];
 };
 
 /**
  * Obtém balanços com paginação
  */
-export const getPaginatedDailyBalances = async (page: number, size: number): Promise<DailyBalance[]> => {
+export const getPaginatedDailyBalances = async (page: number, size: number): Promise<PaginatedResponse<DailyBalance>> => {
   if (USE_MOCKS) {
     await new Promise(resolve => setTimeout(resolve, 300));
     // Mock simplificado para balanços paginados
@@ -138,12 +231,77 @@ export const getPaginatedDailyBalances = async (page: number, size: number): Pro
       date.setDate(date.getDate() - (page - 1) * size - i);
       return mockDailyBalance(date.toISOString().split('T')[0]);
     });
-    return mockBalances;
+    
+    return {
+      data: mockBalances,
+      page: page,
+      pageSize: size,
+      totalItems: 100, // valor arbitrário para simulação
+      totalPages: Math.ceil(100 / size)
+    };
   }
-  const response = await api.get('/daily-balance/paginated', {
-    params: { page, size }
-  });
-  return extractData<DailyBalance[]>(response.data);
+  
+  try {
+    const response = await api.get('/daily-balance/paginated', {
+      params: { page, size }
+    });
+    
+    console.log('API response for daily balances:', response.data);
+    
+    // Verifica se tem a estrutura aninhada completa
+    if (response.data && 
+        response.data.data && 
+        response.data.data.items && 
+        Array.isArray(response.data.data.items)) {
+      
+      const balances = response.data.data.items as DailyBalance[];
+      
+      return {
+        data: balances,
+        page: response.data.data.pageNumber || page,
+        pageSize: response.data.data.pageSize || size,
+        totalItems: response.data.data.totalCount || balances.length,
+        totalPages: response.data.data.totalPages || Math.ceil((response.data.data.totalCount || balances.length) / size)
+      };
+    }
+    
+    // Fallback para estrutura alternativa
+    if (response.data && 
+        response.data.items && 
+        Array.isArray(response.data.items)) {
+      
+      const balances = response.data.items as DailyBalance[];
+      
+      return {
+        data: balances,
+        page: response.data.pageNumber || page,
+        pageSize: response.data.pageSize || size,
+        totalItems: response.data.totalCount || balances.length,
+        totalPages: response.data.totalPages || Math.ceil((response.data.totalCount || balances.length) / size)
+      };
+    }
+    
+    // Último recurso
+    const balances = extractData<DailyBalance[]>(response.data) || [];
+    
+    return {
+      data: balances,
+      page: page,
+      pageSize: size,
+      totalItems: balances.length,
+      totalPages: Math.ceil(balances.length / size)
+    };
+  } catch (error) {
+    console.error('Error in getPaginatedDailyBalances:', error);
+    
+    return {
+      data: [],
+      page: page,
+      pageSize: size,
+      totalItems: 0,
+      totalPages: 0
+    };
+  }
 };
 
 /**

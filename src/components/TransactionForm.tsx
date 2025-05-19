@@ -127,8 +127,8 @@ const TransactionForm: React.FC = () => {
               name="transactionDate"
               type="date"
               value={formData.transactionDate}
-              onChange={handleInputChange}
               InputLabelProps={{ shrink: true }}
+              InputProps={{ readOnly: true }}
             />
             
             {error && (
