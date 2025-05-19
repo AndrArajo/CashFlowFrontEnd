@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Transaction, TransactionInput, DailyBalance } from '../types';
+import { getToken } from './auth';
 
 // Importação dos mocks
 import { mockTransactions } from '../mocks/transactions';
@@ -13,7 +14,14 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
-// Função auxiliar para garantir compatibilidade com diferentes formatos de resposta da API
+api.interceptors.request.use(config => {
+  const token = getToken();
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
+});
+
 const extractData = <T>(response: any): T => {
   // Verifica se a resposta está no formato { data: [...] } da API ou diretamente como array
   if (response && response.data && Array.isArray(response.data)) {

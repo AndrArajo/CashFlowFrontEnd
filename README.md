@@ -12,6 +12,14 @@ O CashFlow Frontend serve como interface para o sistema de gerenciamento finance
 - Analisar informações financeiras por períodos específicos
 - Suporte a modo offline com dados mockados para desenvolvimento e testes
 
+## Capturas de Tela
+
+### Tela de Transações
+![Tela de Transações](./images/transactions.png)
+
+### Tela de Balanço Diário
+![Tela de Balanço Diário](./images/daily_balance.png)
+
 ## Executando com Docker
 
 ### Pré-requisitos
@@ -96,6 +104,7 @@ npm run test:coverage
 
 ## Principais Funcionalidades
 
+- **Autenticação**: Sistema de login com token JWT
 - **Listagem de Transações**: Visualização de todas as transações com opção de atualização
 - **Formulário de Transações**: Interface para cadastro de novas transações
 - **Relatório de Balanço Diário**: Visualização do balanço financeiro por períodos
@@ -118,6 +127,7 @@ npm run test:coverage
 A aplicação segue uma estrutura organizada por funcionalidade:
 
 - **src/components/**: Componentes reutilizáveis da interface
+- **src/contexts/**: Contextos da aplicação, incluindo autenticação
 - **src/pages/**: Páginas principais da aplicação
 - **src/services/**: Serviços para comunicação com a API
 - **src/types/**: Definições de tipos TypeScript
@@ -125,8 +135,26 @@ A aplicação segue uma estrutura organizada por funcionalidade:
 - **src/__tests__/**: Testes automatizados
 - **public/**: Arquivos estáticos 
 
+## Autenticação
+
+A aplicação utiliza um sistema de autenticação baseado em token JWT:
+
+
+- **Comportamento em modo mock**:
+  - Quando a variável `REACT_APP_USE_MOCKS=true` está ativa, o sistema de autenticação é automaticamente ignorado
+  - Acesso direto às funcionalidades sem necessidade de login
+  - Ideal para desenvolvimento e testes rápidos
+
+- **Autenticação em ambiente de produção**:
+  - Token JWT armazenado no localStorage
+  - Interceptor do Axios para inclusão do token em todas as requisições
+  - Rotas protegidas que redirecionam para o login quando não autenticado
+  - Expiração do token gerenciada automaticamente
+
 ## Comunicação com Backend
 
 A aplicação se comunica com o backend através de uma API RESTful. A configuração da URL da API é feita através da variável de ambiente `REACT_APP_API_URL`.
 
 Para desenvolvimento sem backend, a aplicação suporta um modo de mock que pode ser ativado através da variável de ambiente `REACT_APP_USE_MOCKS=true`.
+
+

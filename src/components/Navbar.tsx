@@ -7,14 +7,30 @@ import {
   Box,
   Container
 } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+
+// Verificar se está em modo mock
+const USE_MOCKS = process.env.REACT_APP_USE_MOCKS === 'true';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { authState, logout } = useAuth();
   
   const isActive = (path: string) => {
     return location.pathname === path;
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  // Se estiver em modo mock, exibe o navbar ou se estiver autenticado
+  if (!USE_MOCKS && !authState.isAuthenticated) {
+    return null;
+  }
 
   return (
     <AppBar position="static">
@@ -42,6 +58,16 @@ const Navbar: React.FC = () => {
             >
               Balanço Diário
             </Button>
+
+            {/* Só exibe o botão de logout quando não estiver em modo mock */}
+            {!USE_MOCKS && (
+              <Button 
+                color="inherit"
+                onClick={handleLogout}
+              >
+                Sair
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Container>
