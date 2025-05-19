@@ -20,6 +20,15 @@ O CashFlow Frontend serve como interface para o sistema de gerenciamento finance
 ### Tela de Balanço Diário
 ![Tela de Balanço Diário](./images/daily_balance.png)
 
+## CI/CD
+
+O projeto utiliza GitHub Actions para integração contínua e entrega contínua:
+
+- **Integração Contínua**: Testes automatizados são executados em cada push e pull request
+- **Entrega Contínua**: Builds bem-sucedidos na branch main são automaticamente publicados no DockerHub
+- **Imagem Docker**: Disponível em [andrarajo/cashflow-frontend](https://hub.docker.com/r/andrarajo/cashflow-frontend)
+
+
 ## Executando com Docker
 
 ### Pré-requisitos
@@ -49,6 +58,13 @@ A aplicação estará disponível em: http://localhost:80
 Para parar a aplicação:
 ```bash
 docker-compose down
+```
+
+### Usando a imagem do DockerHub
+Para usar a imagem pré-construída do DockerHub:
+```bash
+docker pull andrarajo/cashflow-frontend:latest
+docker run -p 80:80 andrarajo/cashflow-frontend:latest
 ```
 
 ## Executando localmente
@@ -121,6 +137,7 @@ npm run test:coverage
 - **React Router**: Gerenciamento de rotas da aplicação
 - **Jest e Testing Library**: Framework de testes
 - **Docker**: Containerização para implantação
+- **GitHub Actions**: Automação de CI/CD
 
 ## Estrutura do Projeto
 
@@ -139,6 +156,9 @@ A aplicação segue uma estrutura organizada por funcionalidade:
 
 A aplicação utiliza um sistema de autenticação baseado em token JWT:
 
+- **Credenciais padrão**: 
+  - Usuário: `cashflow-user`
+  - Senha: `password`
 
 - **Comportamento em modo mock**:
   - Quando a variável `REACT_APP_USE_MOCKS=true` está ativa, o sistema de autenticação é automaticamente ignorado
@@ -156,5 +176,20 @@ A aplicação utiliza um sistema de autenticação baseado em token JWT:
 A aplicação se comunica com o backend através de uma API RESTful. A configuração da URL da API é feita através da variável de ambiente `REACT_APP_API_URL`.
 
 Para desenvolvimento sem backend, a aplicação suporta um modo de mock que pode ser ativado através da variável de ambiente `REACT_APP_USE_MOCKS=true`.
+
+### Endpoint de Autenticação
+
+```
+POST /api/v1/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password
+client_id=kong
+client_secret=kong-client-secret
+username=cashflow-user
+password=password
+```
+
+A resposta inclui um token JWT que é utilizado em todas as requisições subsequentes.
 
 

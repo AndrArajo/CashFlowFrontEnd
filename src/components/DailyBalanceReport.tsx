@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { DailyBalance } from '../types';
 import { getDailyBalanceByPeriod } from '../services/api';
+import { formatDateBr } from '../utils/dateUtils';
 
 const DailyBalanceReport: React.FC = () => {
   const [startDate, setStartDate] = useState<string>(
@@ -67,7 +68,7 @@ const DailyBalanceReport: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return formatDateBr(dateString);
   };
 
   return (

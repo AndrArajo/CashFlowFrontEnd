@@ -6,7 +6,7 @@ import { Transaction, TransactionType } from '../../types';
 
 // Mock do módulo api
 jest.mock('../../services/api', () => ({
-  getTransactions: jest.fn()
+  getPaginatedTransactions: jest.fn()
 }));
 
 // Importar api após o mock
@@ -34,13 +34,21 @@ describe('TransactionList Component', () => {
     }
   ];
 
+  const mockPaginatedResponse = {
+    data: mockTransactions,
+    page: 1,
+    pageSize: 10,
+    totalItems: 2,
+    totalPages: 1
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test('deve renderizar a lista de transações corretamente', async () => {
-    // Mock da função getTransactions
-    (api.getTransactions as jest.Mock).mockResolvedValue(mockTransactions);
+    // Mock da função getPaginatedTransactions
+    (api.getPaginatedTransactions as jest.Mock).mockResolvedValue(mockPaginatedResponse);
 
     render(<TransactionList />);
 
@@ -62,8 +70,14 @@ describe('TransactionList Component', () => {
   });
 
   test('deve exibir mensagem quando não há transações', async () => {
-    // Mock da função getTransactions retornando array vazio
-    (api.getTransactions as jest.Mock).mockResolvedValue([]);
+    // Mock da função getPaginatedTransactions retornando array vazio
+    (api.getPaginatedTransactions as jest.Mock).mockResolvedValue({
+      data: [],
+      page: 1,
+      pageSize: 10,
+      totalItems: 0,
+      totalPages: 0
+    });
 
     render(<TransactionList />);
 
@@ -74,8 +88,8 @@ describe('TransactionList Component', () => {
   });
 
   test('deve exibir mensagem de erro quando a API falha', async () => {
-    // Mock da função getTransactions retornando erro
-    (api.getTransactions as jest.Mock).mockRejectedValue(new Error('API Error'));
+    // Mock da função getPaginatedTransactions retornando erro
+    (api.getPaginatedTransactions as jest.Mock).mockRejectedValue(new Error('API Error'));
 
     render(<TransactionList />);
 
@@ -89,21 +103,26 @@ describe('TransactionList Component', () => {
   });
 
   test('deve atualizar os dados quando o botão de refresh é clicado', async () => {
+    const novoItem = {
+      id: 3,
+      description: 'Novo item',
+      amount: 300,
+      type: TransactionType.Credit,
+      origin: 'Teste',
+      transactionDate: '2025-05-20T00:00:00',
+      createdAt: '2025-05-20T10:00:00',
+    };
+
     // Configurar o mock para retornar diferentes conjuntos de dados
-    (api.getTransactions as jest.Mock)
-      .mockResolvedValueOnce(mockTransactions)
-      .mockResolvedValueOnce([
-        ...mockTransactions,
-        {
-          id: 3,
-          description: 'Novo item',
-          amount: 300,
-          type: TransactionType.Credit,
-          origin: 'Teste',
-          transactionDate: '2025-05-20T00:00:00',
-          createdAt: '2025-05-20T10:00:00',
-        }
-      ]);
+    (api.getPaginatedTransactions as jest.Mock)
+      .mockResolvedValueOnce(mockPaginatedResponse)
+      .mockResolvedValueOnce({
+        data: [...mockTransactions, novoItem],
+        page: 1,
+        pageSize: 10,
+        totalItems: 3,
+        totalPages: 1
+      });
 
     render(<TransactionList />);
 
@@ -113,7 +132,7 @@ describe('TransactionList Component', () => {
     });
 
     // Verificar que foram chamados uma vez
-    expect(api.getTransactions).toHaveBeenCalledTimes(1);
+    expect(api.getPaginatedTransactions).toHaveBeenCalledTimes(1);
 
     // Clicar no botão de refresh
     fireEvent.click(screen.getByTestId('refresh-button'));
@@ -124,6 +143,6 @@ describe('TransactionList Component', () => {
     });
 
     // Verificar que foram chamados uma segunda vez
-    expect(api.getTransactions).toHaveBeenCalledTimes(2);
+    expect(api.getPaginatedTransactions).toHaveBeenCalledTimes(2);
   });
 }); 

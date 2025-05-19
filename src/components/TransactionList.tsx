@@ -24,6 +24,7 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Transaction, TransactionType, PaginatedResponse } from '../types';
 import { getPaginatedTransactions } from '../services/api';
+import { formatDateBr } from '../utils/dateUtils';
 
 const TransactionList: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -145,7 +146,7 @@ const TransactionList: React.FC = () => {
                     </TableCell>
                     <TableCell>{transaction.origin || '-'}</TableCell>
                     <TableCell>
-                      {new Date(transaction.transactionDate).toLocaleDateString('pt-BR')}
+                      {formatDateBr(transaction.transactionDate)}
                     </TableCell>
                   </TableRow>
                 )) : (
