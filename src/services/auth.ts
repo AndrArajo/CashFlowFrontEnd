@@ -24,6 +24,7 @@ export const login = async (credentials: LoginCredentials): Promise<LoginRespons
   params.append('client_secret', 'kong-client-secret');
   params.append('username', credentials.username);
   params.append('password', credentials.password);
+  params.append('scope', 'openid profile email');
 
   const response = await axios.post(`${API_URL}/token`, params, {
     headers: {

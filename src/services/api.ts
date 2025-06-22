@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { Transaction, TransactionInput, DailyBalance, PaginatedResponse } from '../types';
 import { getToken } from './auth';
+import { config } from '../config/env';
 
 // Importação dos mocks
 import { mockTransactions } from '../mocks/transactions';
 import { mockDailyBalance, mockDailyBalancePeriod } from '../mocks/dailyBalance';
 
-// Obtém valores do .env
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1';
-const USE_MOCKS = process.env.REACT_APP_USE_MOCKS === 'true';
+// Obtém valores da configuração (com suporte a runtime)
+const API_URL = config.API_URL;
+const USE_MOCKS = config.USE_MOCKS;
 
 const api = axios.create({
   baseURL: API_URL,
