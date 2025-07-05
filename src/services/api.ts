@@ -234,7 +234,7 @@ export const getPaginatedDailyBalances = async (page: number, size: number): Pro
   }
   
   try {
-    const response = await api.get('/daily-balance/paginated', {
+    const response = await api.get('/daily-balance', {
       params: { page, size }
     });
     
