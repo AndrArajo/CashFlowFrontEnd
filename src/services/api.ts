@@ -68,7 +68,7 @@ export const getPaginatedTransactions = async (page: number, size: number): Prom
   }
   
   try {
-    const response = await api.get('/transaction/paginated', {
+    const response = await api.get('/transaction', {
       params: { page, size }
     });
     
